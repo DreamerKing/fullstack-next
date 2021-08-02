@@ -4,17 +4,39 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "gen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
-    "@chakra-ui/icons": "^1.0.0",
-    "@chakra-ui/react": "^1.4.2",
-    "@emotion/react": "^11.0.0",
-    "@emotion/styled": "^11.0.0",
-    "framer-motion": "^4.0.3",
+    "@chakra-ui/core": "^0.8.0",
+    "@chakra-ui/react": "^1.6.5",
+    "@chakra-ui/theme-tools": "^1.1.8",
+    "@emotion/core": "^11.0.0",
+    "@emotion/react": "^11.4.0",
+    "@emotion/styled": "^11.3.0",
+    "@urql/exchange-graphcache": "^4.2.1",
+    "emotion-theming": "^11.0.0",
+    "formik": "^2.2.9",
+    "framer-motion": "^4.1.17",
+    "graphql": "^15.5.1",
+    "isomorphic-unfetch": "^3.1.0",
     "next": "latest",
+    "next-urql": "^3.1.1",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "react-is": "^17.0.2",
+    "urql": "^2.0.4",
+    "wonka": "^4.0.15"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@graphql-codegen/cli": "1.21.6",
+    "@graphql-codegen/fragment-matcher": "2.0.1",
+    "@graphql-codegen/introspection": "1.18.2",
+    "@graphql-codegen/typescript": "1.22.4",
+    "@graphql-codegen/typescript-operations": "1.18.3",
+    "@graphql-codegen/typescript-urql": "^2.0.10",
+    "@types/react": "^17.0.14",
+    "typescript": "^4.3.5"
+  }
 }
