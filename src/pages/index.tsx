@@ -2,15 +2,32 @@ import { Layout } from "../components/Layout";
 import { withUrqlClient } from "next-Urql";
 import createUrqlClient from "../utils/createUrqlClient";
 import { usePostQuery } from "src/generated/graphql";
-import { Flex, Link, Stack, Box, Heading, Text } from "@chakra-ui/react";
+import {
+  Flex,
+  Link,
+  Stack,
+  Box,
+  Heading,
+  Text,
+  Button,
+} from "@chakra-ui/react";
 import NextLink from "next/link";
+import { useState } from "react";
 
 const Index = () => {
-  const [{ data }] = usePostQuery({
-    variables: {
-      limit: 10,
-    },
+  const [variables, setVariables] = useState({
+    limit: 3,
+    cursor: null as null | string,
   });
+  const [{ data, fetching }] = usePostQuery({
+    variables,
+  });
+  console.log(variables, "variables");
+  
+  if (!fetching && !data) {
+    return <div>you got query failed for some reason</div>;
+  }
+
   return (
     <Layout>
       <Flex align="center">
@@ -20,18 +37,36 @@ const Index = () => {
         </NextLink>
       </Flex>
 
-      {!data ? (
+      {!data && fetching ? (
         <div>loading...</div>
       ) : (
         <Stack spacing={8}>
-          {data?.posts?.map((p) => {
-            <Box key={p.id} p={5} shadow="md" borderWidth="1px">
-              <Heading fontSize="xl">{p.title}</Heading>
-              <Text>{p.textSnippet}</Text>
-            </Box>;
+          {data!.posts?.map((p) => {
+            return (
+              <Box key={p.id} p={5} shadow="md" borderWidth="1px">
+                <Heading fontSize="xl">{p.title}</Heading>
+                <Text>{p.textSnippet}</Text>
+              </Box>
+            );
           })}
         </Stack>
       )}
+      { data?.posts?.hasMore ? (
+        <Flex>
+          <Button
+            onClick={() => {
+              setVariables({
+                limit: variables.limit,
+                cursor: data.posts.posts[data.posts.posts.length - 1].createdAt,
+              });
+            }}
+            m="auto"
+            my={8}
+          >
+            load more
+          </Button>
+        </Flex>
+      ) : null}
     </Layout>
   );
 };
