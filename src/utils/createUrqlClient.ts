@@ -18,6 +18,9 @@ const createUrqlClient = (ssrExchange: any) => ({
     dedupExchange,
     errorExchange,
     cacheExchange({
+      keys: {
+        PaginatedPosts: () => null,
+      },
       resolvers: {
         Query: {
           posts: cursorPagination(),
@@ -99,23 +102,29 @@ const cursorPagination = ({
     console.log("filedArgs: ", fieldArgs);
     const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`;
     console.log("we create key", fieldKey);
-    
-    const isItInTheCache = cache.resolveFieldByKey(entityKey, fieldKey);
-    console.log(isItInTheCache, );
-    
-    info.partial = !!isItInTheCache;
 
+    const isItInTheCache = cache.resolve(
+      cache.resolveFieldByKey(entityKey, fieldKey) as string,
+      "posts"
+    );
+    console.log(isItInTheCache);
+
+    info.partial = !!isItInTheCache;
+    let hasMore = true;
     const results: string[] = [];
 
     fieldInfos.forEach((fi) => {
       const key = cache.resolveFieldByKey(entityKey, fi.fieldKey) as string;
-      const data = cache.resolve(key, 'posts');
-      const hasMore = cache.resolve(key, 'hasMore');
-      console.log(hasMore, data, 'cache');
-      
+      const data = cache.resolve(key, "posts");
+      const _hasMore = cache.resolve(key, "hasMore");
+      if (!_hasMore) {
+        hasMore = _hasMore as boolean;
+      }
+      console.log(hasMore, data, "cache");
+
       results.push(...data);
     });
-    return { hasMore: true, posts: results};
+    return { __typename: "PaginatedPosts", hasMore, posts: results };
 
     // const visited = new Set();
     // let result: NullArray<string> = [];

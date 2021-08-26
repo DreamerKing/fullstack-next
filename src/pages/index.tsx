@@ -22,8 +22,8 @@ const Index = () => {
   const [{ data, fetching }] = usePostQuery({
     variables,
   });
-  console.log(variables, "variables");
-  
+  console.log(variables, "variables", fetching, data);
+
   if (!fetching && !data) {
     return <div>you got query failed for some reason</div>;
   }
@@ -41,7 +41,7 @@ const Index = () => {
         <div>loading...</div>
       ) : (
         <Stack spacing={8}>
-          {data!.posts?.map((p) => {
+          {data!.posts?.posts?.map((p) => {
             return (
               <Box key={p.id} p={5} shadow="md" borderWidth="1px">
                 <Heading fontSize="xl">{p.title}</Heading>
@@ -51,7 +51,7 @@ const Index = () => {
           })}
         </Stack>
       )}
-      { data?.posts?.hasMore ? (
+      {data?.posts?.hasMore ? (
         <Flex>
           <Button
             onClick={() => {

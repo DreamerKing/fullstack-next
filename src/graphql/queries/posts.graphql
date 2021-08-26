@@ -9,6 +9,5 @@ query Post($limit: Int!, $cursor: String) {
       updatedAt
       textSnippet
     }
-    
   }
 }
