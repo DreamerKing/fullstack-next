@@ -16,7 +16,7 @@ import { useState } from "react";
 
 const Index = () => {
   const [variables, setVariables] = useState({
-    limit: 3,
+    limit: 5,
     cursor: null as null | string,
   });
   const [{ data, fetching }] = usePostQuery({
@@ -45,6 +45,7 @@ const Index = () => {
             return (
               <Box key={p.id} p={5} shadow="md" borderWidth="1px">
                 <Heading fontSize="xl">{p.title}</Heading>
+                <Text>posted by {p.creator.username}</Text>
                 <Text>{p.textSnippet}</Text>
               </Box>
             );

@@ -16,7 +16,7 @@ const createUrqlClient = (ssrExchange: any) => ({
   },
   exchanges: [
     dedupExchange,
-    errorExchange,
+    // errorExchange,
     cacheExchange({
       keys: {
         PaginatedPosts: () => null,
@@ -28,6 +28,23 @@ const createUrqlClient = (ssrExchange: any) => ({
       },
       updates: {
         Mutation: {
+          createPost: (_result, args, cache, info) {
+            console.log("start");
+            console.log(cache.inspectFields("Query"));
+            cache.invalidate("Query", "posts")
+            
+            cache.invalidate('Query', "posts", {
+              variables: {
+                limit: 15,
+                cursor: null
+              }
+            })
+            console.log(cache.inspectFields('Query'));
+            console.log("enf");
+            
+            
+          },
+
           logout: (_result: LoginMutation, args, cache, info) => {
             betterUpdateQuery<LogoutMutation, MeQuery>(
               cache,

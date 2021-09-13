@@ -8,6 +8,10 @@ query Post($limit: Int!, $cursor: String) {
       createdAt
       updatedAt
       textSnippet
+      creator {
+        id
+        username
+      }
     }
   }
 }
