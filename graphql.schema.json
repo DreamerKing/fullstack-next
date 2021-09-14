@@ -87,7 +87,7 @@
                 "deprecationReason": null
               },
               {
-                "name": "userId",
+                "name": "postId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
