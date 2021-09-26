@@ -1,49 +1,32 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Formik, Form } from "formik";
-import { Button, Link, Box, Flex } from "@chakra-ui/react";
-import NextLink from "next/link";
-import { isServer } from '../utils/isServer'
-
-import { toErrorMap } from "src/utils/toErrorMap";
-import { withUrqlClient } from "next-Urql";
+import { Button, Box } from "@chakra-ui/react";
 import { InputFiled } from "../components/InputFiled";
 import { Layout } from "../components/Layout";
-import createUrqlClient from "src/utils/createUrqlClient";
-import { useCreatePostMutation, useMeQuery } from "src/generated/graphql";
+import { useCreatePostMutation } from "src/generated/graphql";
 import { useRouter } from "next/router";
-import { useIsAuth } from '../utils/useIsAuth';
+import { useIsAuth } from "../utils/useIsAuth";
+import { withApollo } from "src/utils/withAopllo";
 
 export const CreatePost: React.FC<{}> = ({}) => {
-//   const [{ data, fetching }] = useMeQuery({ pause: isServer() });
-    const router = useRouter();
-    useIsAuth();
-//   useEffect(() => {
-//     if (!fetching && !data?.me) {
-//       router.replace("/login");
-//     }
-//   }, [data, router, fetching]);
-  const [, createPost] = useCreatePostMutation();
+  const router = useRouter();
+  useIsAuth();
+  const [createPost] = useCreatePostMutation();
   return (
     <Layout variant="small">
       <Formik
         initialValues={{ title: "", text: "" }}
-        onSubmit={async (values, { setErrors }) => {
+        onSubmit={async (values) => {
           console.log(values);
-          const { error } = await createPost({ input: values });
-          if (error) {
-            router.push("/login");
-            console.log(error);
-            // setErrors(error);
-          } else {
+          const { errors } = await createPost({
+            variables: { input: values },
+            update: (cache) => {
+              cache.evict({ fieldName: "posts: {}" });
+            },
+          });
+          if (!errors) {
             router.push("/");
           }
-          /*   const response = await login({ options: values });
-            // console.log(response);
-            if (response.data?.login?.errors) {
-              setErrors(toErrorMap(response.data.login.errors));
-            } else {
-              route.push("/");
-            } */
         }}
       >
         {({ isSubmitting }) => (
@@ -74,4 +57,4 @@ export const CreatePost: React.FC<{}> = ({}) => {
   );
 };
 
-export default withUrqlClient(createUrqlClient)(CreatePost);
+export default withApollo({ ssr: false })(CreatePost);
